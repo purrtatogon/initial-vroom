@@ -1,0 +1,24 @@
+services:
+  db:
+    image: mongo:latest
+    container_name: db-mongo-initial
+    ports:
+      - "27017:27017"
+
+  backend:
+    build: ./backend
+    container_name: initial-vroom-back
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://db:27017/vroom
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: initial-vroom-front
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend

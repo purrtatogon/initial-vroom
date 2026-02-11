@@ -1,0 +1,14 @@
+# Maven build output
+/target/
+
+# Log files
+/logs/
+*.log
+
+# Hot-swap / JRebel files
+*.lst
+*.rebel.xml
+
+# If you use a local H2 database for testing
+/*.mv.db
+/*.trace.db

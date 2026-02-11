@@ -1,0 +1,46 @@
+<div class="dashboard">
+  <div class="controls">
+    <button class="start-btn" (click)="startSimulation()" [disabled]="isConnected">
+      Start Simulation
+    </button>
+    <button class="stop-btn" (click)="stopSimulation()" [disabled]="!isConnected">
+      Stop Simulation
+    </button>
+  </div>
+
+  <div class="container">
+    <aside class="left-panel">
+      <div class="gauges">
+        <div class="gauge">
+          <span class="gauge-label">Speed</span>
+          <span class="gauge-value">{{ telemetry?.currentSpeed ?? 0 | number:'1.0-0' }}</span>
+          <span class="gauge-unit">km/h</span>
+        </div>
+        <div class="gauge">
+          <span class="gauge-label">RPM</span>
+          <span class="gauge-value">{{ telemetry?.currentRpm ?? 0 | number:'1.0-0' }}</span>
+          <span class="gauge-unit">rpm</span>
+        </div>
+      </div>
+      <div class="driver-info">
+        <h2 class="driver-name">{{ telemetry?.driverName ?? '—' }}</h2>
+        <p class="car-name">{{ telemetry?.carDisplayName ?? '—' }}</p>
+      </div>
+    </aside>
+
+    <section class="track-map">
+      <div class="map-container">
+        @if (telemetry && telemetry.imageUrl) {
+          <!-- [style.left.px] and [style.top.px] position the car on the map from telemetry coordinates -->
+          <img
+            class="car-icon"
+            [src]="telemetry.imageUrl"
+            [style.left.px]="telemetry.x"
+            [style.top.px]="telemetry.y"
+            alt="Car"
+          />
+        }
+      </div>
+    </section>
+  </div>
+</div>
