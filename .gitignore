@@ -1,0 +1,78 @@
+# ==========================================
+# Root / General
+# ==========================================
+.DS_Store
+*.log
+.env
+.env.*
+dist/
+tmp/
+out/
+docs/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.iml
+.classpath
+.project
+.settings/
+.nb-gradle/
+
+# ==========================================
+# Frontend (Angular / Node.js)
+# ==========================================
+**/node_modules/
+**/npm-debug.log*
+**/yarn-error.log*
+**/.angular/
+**/yarn.lock
+**/package-lock.json
+
+# Angular build artifacts
+**/browser/
+**/media/
+**/scripts.*.js
+**/styles.*.css
+
+# ==========================================
+# Backend (Java / Spring Boot)
+# ==========================================
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+
+# Maven
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/pom.xml.next
+**/release.properties
+
+# Gradle
+**/.gradle/
+**/build/
+
+# ==========================================
+# Testing & Coverage
+# ==========================================
+**/coverage/
+**/.nyc_output/
+**/.sauce/
+**/reports/
+
+# Docker
+.dockerignore
+**/docker-compose.override.yml
+
+# Maven Wrapper (Optional: keep if you want portable builds)
+!**/mvnw
+!**/.mvn/wrapper/maven-wrapper.properties
+!**/.mvn/wrapper/maven-wrapper.jar
+
+# Data Simulation / Logs
+**/logs/
+**/data/db/        # Common for local MongoDB volumes
