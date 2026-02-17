@@ -1,0 +1,14 @@
+# Local environment files (don't commit secrets!)
+.env
+.env.local
+
+# Angular cache and build output
+/.angular/
+/dist/
+
+# Test output
+/coverage/
+
+# Log files
+npm-debug.log*
+yarn-error.log*
