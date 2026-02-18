@@ -5,8 +5,9 @@ import com.opencsv.exceptions.CsvConstraintViolationException;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 
 /**
- * Custom OpenCSV converter for CSV columns with "TRUE"/"FALSE" strings.
- * Default Boolean parsing is case-sensitive; this handles both.
+ * Needed this because OpenCSV doesn't handle "TRUE"/"FALSE" strings as booleans by default.
+ * The CSV has has_speed_chime as "TRUE" or "FALSE" text, and the default parser chokes on it.
+ * Extending AbstractBeanField lets us hook into OpenCSV's type conversion pipeline.
  */
 public class BooleanConverter extends AbstractBeanField<Boolean, String> {
 
@@ -15,6 +16,7 @@ public class BooleanConverter extends AbstractBeanField<Boolean, String> {
         if (value == null || value.isBlank()) {
             return null;
         }
+        // trim + lowercase so "TRUE", " true ", "True" all work
         return Boolean.parseBoolean(value.trim().toLowerCase());
     }
 }

@@ -14,26 +14,29 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * Loads car data from CSV into MongoDB on startup if the collection is empty.
- * CommandLineRunner runs after the application context is ready.
+ * Loads car data from CSV files into MongoDB when the app starts up.
+ * CommandLineRunner is a Spring interface — its run() fires right after the context is ready.
+ * This way we don't need a manual migration script or a separate data loader tool.
  */
 @Component
 public class DataInitializer implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
+    // These paths are relative to the classpath (src/main/resources/)
     private static final String STAGE1_CSV = "data/stage1_battle cars.csv";
     private static final String STAGE2_CSV = "data/stage2_battle cars.csv";
 
     private final CarRepository carRepository;
 
+    // Spring injects CarRepository automatically (constructor injection)
     public DataInitializer(CarRepository carRepository) {
         this.carRepository = carRepository;
     }
 
     @Override
     public void run(String... args) {
-        // Skip if data already loaded (e.g. after restart)
+        // Only seed if the collection is empty — prevents duplicates on every restart
         if (carRepository.count() > 0) {
             log.info("Cars collection already populated, skipping data initialization.");
             return;
@@ -46,6 +49,7 @@ public class DataInitializer implements CommandLineRunner {
         loadCsv(allCars, STAGE1_CSV);
         loadCsv(allCars, STAGE2_CSV);
 
+        // saveAll does a single batch insert — much faster than calling save() 14 times
         carRepository.saveAll(allCars);
         log.info("Loaded {} cars into MongoDB.", allCars.size());
     }
@@ -55,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
                 getClass().getClassLoader().getResourceAsStream(resourceName),
                 StandardCharsets.UTF_8)) {
 
-            // OpenCSV CsvToBeanBuilder maps CSV rows to Car entities by column name
+            // CsvToBeanBuilder maps each CSV row to a Car object using @CsvBindByName annotations
             List<Car> cars = new CsvToBeanBuilder<Car>(reader)
                     .withType(Car.class)
                     .withIgnoreLeadingWhiteSpace(true)

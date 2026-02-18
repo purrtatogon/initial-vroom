@@ -7,13 +7,16 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Car entity mapped to the MongoDB "cars" collection.
- * First time using Spring Data MongoDB.
+ * Maps to the "cars" collection in MongoDB.
+ * Each field uses @CsvBindByName so OpenCSV can parse the CSV rows directly into Car objects.
+ * The @Id on carModelId means the CSV's car_model_id becomes the Mongo _id — a readable natural key
+ * like "ae86_takumi_stg1_stock" instead of a random ObjectId.
  */
-@Document(collection = "cars")  // Maps this class to the "cars" collection in MongoDB
+@Document(collection = "cars")
 public class Car {
 
-    @Id  // MongoDB document ID field
+    // Using car_model_id as the Mongo _id — natural key so we can query by meaningful IDs
+    @Id
     @CsvBindByName(column = "car_model_id")
     private String carModelId;
 
@@ -26,12 +29,14 @@ public class Car {
     @CsvBindByName(column = "driver_team")
     private String driverTeam;
 
+    // "Stage 1" or "Stage 2" — used to group cars in the battle picker
     @CsvBindByName(column = "stage_id")
     private String stageId;
 
     @CsvBindByName(column = "engine_code")
     private String engineCode;
 
+    // These three drive the simulation physics (power-to-weight ratio = carHp / weightKg)
     @CsvBindByName(column = "car_hp")
     private Integer carHp;
 
@@ -41,15 +46,19 @@ public class Car {
     @CsvBindByName(column = "weight_kg")
     private Integer weightKg;
 
+    // Only used for scaling the RPM gauge on the dashboard, not for sim physics
     @CsvBindByName(column = "redline_rpm")
     private Integer redlineRpm;
 
+    // "NA", "Turbo", or "Twin Turbo" — turbo cars get a 4% straight-line speed bonus
     @CsvBindByName(column = "aspiration_type")
     private String aspirationType;
 
+    // "FR", "FF", "MR", "4WD" — 4WD gets an 8% hairpin speed bonus
     @CsvBindByName(column = "drivetrain_code")
     private String drivetrainCode;
 
+    // Custom converter because CSV has "TRUE"/"FALSE" as strings
     @CsvCustomBindByName(column = "has_speed_chime", converter = BooleanConverter.class)
     private Boolean hasSpeedChime;
 
@@ -59,11 +68,10 @@ public class Car {
     @CsvBindByName(column = "specs_note")
     private String specsNote;
 
-    // Default constructor for OpenCSV and MongoDB
+    // No-arg constructor required by both OpenCSV and Spring Data MongoDB
     public Car() {
     }
 
-    // Getters and setters
     public String getCarModelId() {
         return carModelId;
     }
