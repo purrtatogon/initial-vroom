@@ -1,1 +1,66 @@
-/* Global styles */
+/*
+ * Global design tokens and reset.
+ * The "Midnight Run" palette: amber + green on black, inspired by 90s ECU monitors.
+ * All colors are WCAG AAA compliant (7:1 ratio for normal text, 4.5:1 for large text).
+ */
+
+:root {
+  /* Background and surface colors */
+  --color-bg: #0a0a0a;
+  --color-panel: #111111;
+  --color-panel-border: #1a1a1a;
+
+  /* Accent colors */
+  --color-amber: #ff9100;
+  --color-amber-dim: rgba(255, 145, 0, 0.6);  /* 3.7:1 — used for non-text UI only */
+  --color-green: #00ff88;
+  --color-green-dim: rgba(0, 255, 136, 0.15);
+  --color-red: #ff6b6b;                        /* 7.1:1 against --color-bg */
+
+  /* Text hierarchy */
+  --color-text-primary: #e0e0e0;    /* main content */
+  --color-text-secondary: #b0b0b0;  /* 8.7:1 — labels and secondary info */
+  --color-text-dim: #a0a0a0;        /* 7.2:1 — muted text like gauge labels */
+  --color-road: #2a2a2a;
+
+  /* Typography */
+  --font-display: 'VT323', monospace;  /* retro monospace for headers and data */
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+
+  /* Shared values */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --focus-ring: 0 0 0 3px var(--color-amber);  /* visible focus outline for keyboard nav */
+}
+
+/* Box-sizing reset — makes padding/border math way simpler */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Global focus-visible style — every interactive element gets the amber ring */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Respect user's motion preferences — kills all animations and transitions */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
