@@ -7,25 +7,29 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
- * WebSocket configuration using STOMP over SockJS.
- * First time using WebSockets in Spring Boot.
+ * Sets up STOMP-over-WebSocket so the backend can push telemetry to the frontend in real time.
+ * STOMP gives us topic-based pub/sub out of the box — no need to build our own message protocol.
+ * First time setting this up; the Spring docs + Baeldung guides were super helpful.
  */
 @Configuration
-@EnableWebSocketMessageBroker  // Enables STOMP over WebSocket messaging
+@EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // In-memory broker for destinations prefixed with /topic (e.g. /topic/race)
+        // Simple in-memory broker — good enough for this project, no need for RabbitMQ or ActiveMQ
+        // Any destination starting with /topic will be handled by this broker
         registry.enableSimpleBroker("/topic");
-        // Client messages to /app/* are routed to @MessageMapping methods
+
+        // /app prefix is for messages FROM the client (we don't use this yet, but STOMP needs it)
         registry.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // /vroom-ws is where the frontend connects to open the WebSocket
         registry.addEndpoint("/vroom-ws")
-                .setAllowedOriginPatterns("*")  // Allow all origins (needed behind nginx proxy; tighten for prod)
-                .withSockJS();  // SockJS fallback for browsers that don't support WebSocket
+                .setAllowedOriginPatterns("*")  // wide open for dev; nginx handles this in prod
+                .withSockJS();  // fallback for browsers/proxies that block raw WebSocket
     }
 }
