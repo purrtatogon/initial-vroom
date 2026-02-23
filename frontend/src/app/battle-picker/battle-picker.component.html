@@ -1,0 +1,88 @@
+<!-- Battle picker: first screen the user sees. Select 2 cars, then start a race. -->
+<div class="picker">
+  <h1 class="title">Initial Vroom</h1>
+  <p class="subtitle">Select two cars for battle</p>
+
+  <!-- Error banner — shows when API fails or battle can't start -->
+  @if (error) {
+    <div class="errorBanner" role="alert">
+      <span class="errorIcon" aria-hidden="true">!</span>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <!-- Car selection slots: left lane, VS divider, right lane -->
+  <div class="slots">
+    <div class="slot" [class.slotFilled]="car1">
+      <span class="slotLabel">Left Lane</span>
+      @if (car1) {
+        <img [src]="car1.imageUrl" [alt]="car1.carDisplayName" class="slotImage" />
+        <span class="slotDriver">{{ car1.driverName }}</span>
+        <span class="slotCar">{{ car1.carDisplayName }}</span>
+      } @else {
+        <span class="slotEmpty">Pick a car</span>
+      }
+    </div>
+
+    <div class="versus">
+      <span class="versusText">VS</span>
+      <button
+        class="startBtn"
+        [disabled]="!canStart()"
+        (click)="startBattle()"
+      >
+        {{ starting ? 'Starting...' : 'Start Battle' }}
+      </button>
+    </div>
+
+    <div class="slot" [class.slotFilled]="car2">
+      <span class="slotLabel">Right Lane</span>
+      @if (car2) {
+        <img [src]="car2.imageUrl" [alt]="car2.carDisplayName" class="slotImage" />
+        <span class="slotDriver">{{ car2.driverName }}</span>
+        <span class="slotCar">{{ car2.carDisplayName }}</span>
+      } @else {
+        <span class="slotEmpty">Pick a car</span>
+      }
+    </div>
+  </div>
+
+  <!-- Car roster grouped by stage (Stage 1, Stage 2) -->
+  @if (loading) {
+    <p class="loadingText">Loading roster...</p>
+  } @else {
+    @for (stage of stages; track stage.id) {
+      <section class="stageSection">
+        <h2 class="stageTitle">{{ stage.id }}</h2>
+        <p class="stageDesc">{{ stage.cars.length }} cars available</p>
+        <div class="roster" role="list">
+          @for (car of stage.cars; track car.carModelId) {
+            <!-- Each card is a button for keyboard accessibility (not a div with click) -->
+            <button
+              class="carCard"
+              [class.carCardSelected]="isSelected(car)"
+              [class.carCardCar1]="isCar1(car)"
+              [class.carCardCar2]="isCar2(car)"
+              (click)="selectCar(car)"
+              role="listitem"
+              [attr.aria-pressed]="isSelected(car)"
+              [attr.aria-label]="car.carDisplayName + ' driven by ' + car.driverName + ', ' + car.carHp + ' HP'"
+            >
+              <img [src]="car.imageUrl" [alt]="car.carDisplayName" class="cardImage" />
+              <div class="cardBody">
+                <span class="cardDriver">{{ car.driverName }}</span>
+                <span class="cardCar">{{ car.carDisplayName }}</span>
+                <span class="cardTeam">{{ car.driverTeam }}</span>
+                <div class="cardStats">
+                  <span class="stat">{{ car.carHp }} HP</span>
+                  <span class="stat">{{ car.weightKg }} kg</span>
+                  <span class="stat">{{ car.drivetrainCode }}</span>
+                </div>
+              </div>
+            </button>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>
