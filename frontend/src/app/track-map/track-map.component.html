@@ -1,0 +1,162 @@
+<!--
+  SVG mountain pass track inspired by Mt. Haruna / Akina from Initial D.
+  The road path is hand-drawn with Q (quadratic curves) and L (lines).
+  Cars are positioned using getPointAtLength() in the component TypeScript.
+-->
+<div class="trackWrapper">
+  <svg
+    viewBox="0 0 1000 500"
+    xmlns="http://www.w3.org/2000/svg"
+    class="trackSvg"
+    preserveAspectRatio="xMidYMid slice"
+    role="img"
+    aria-label="Akina mountain pass race track showing two cars racing"
+  >
+    <!-- Topographic contour lines — purely decorative, adds the mountain feel -->
+    <g class="contours" aria-hidden="true">
+      <ellipse cx="500" cy="250" rx="480" ry="230" class="contour contour1" />
+      <ellipse cx="500" cy="250" rx="400" ry="190" class="contour contour2" />
+      <ellipse cx="500" cy="250" rx="320" ry="150" class="contour contour3" />
+      <ellipse cx="500" cy="250" rx="240" ry="110" class="contour contour4" />
+      <ellipse cx="500" cy="250" rx="160" ry="70" class="contour contour5" />
+    </g>
+
+    <!-- Road surface: wider dark stroke drawn behind the racing line for a "road" look -->
+    <path
+      #racingLineBg
+      class="roadSurface"
+      d="M 160,370
+         Q 168,360 178,345
+         L 188,280
+         Q 192,248 178,228
+         L 155,208
+         Q 130,195 140,165
+         L 165,118
+         Q 182,90 215,98
+         L 278,132
+         Q 308,148 325,128
+         L 362,178
+         Q 375,205 405,195
+         L 450,165
+         Q 470,152 460,125
+         L 438,85
+         Q 425,58 458,50
+         L 532,72
+         Q 560,82 568,58
+         L 582,35
+         Q 600,18 620,38
+         L 658,85
+         Q 678,110 708,98
+         L 770,68
+         Q 808,55 828,82
+         L 845,142
+         Q 858,175 838,202
+         L 778,242
+         Q 758,265 742,292
+         L 708,325
+         Q 692,348 662,338
+         L 598,305
+         Q 572,295 562,318
+         L 558,358
+         Q 555,385 580,398
+         L 668,420
+         Q 708,430 738,422
+         L 830,412"
+      aria-hidden="true"
+    />
+
+    <!--
+      Racing line: the actual path that cars follow.
+      Same d= as the road surface, but thinner stroke with a glow.
+      #racingLine is the ViewChild reference used by track-map.component.ts
+    -->
+    <path
+      #racingLine
+      class="racingLine"
+      d="M 160,370
+         Q 168,360 178,345
+         L 188,280
+         Q 192,248 178,228
+         L 155,208
+         Q 130,195 140,165
+         L 165,118
+         Q 182,90 215,98
+         L 278,132
+         Q 308,148 325,128
+         L 362,178
+         Q 375,205 405,195
+         L 450,165
+         Q 470,152 460,125
+         L 438,85
+         Q 425,58 458,50
+         L 532,72
+         Q 560,82 568,58
+         L 582,35
+         Q 600,18 620,38
+         L 658,85
+         Q 678,110 708,98
+         L 770,68
+         Q 808,55 828,82
+         L 845,142
+         Q 858,175 838,202
+         L 778,242
+         Q 758,265 742,292
+         L 708,325
+         Q 692,348 662,338
+         L 598,305
+         Q 572,295 562,318
+         L 558,358
+         Q 555,385 580,398
+         L 668,420
+         Q 708,430 738,422
+         L 830,412"
+    />
+
+    <!-- Start and finish markers -->
+    <line x1="150" y1="360" x2="170" y2="380" class="startLine" aria-hidden="true" />
+    <text x="140" y="355" class="markerLabel">START</text>
+
+    <line x1="820" y1="402" x2="840" y2="422" class="finishLine" aria-hidden="true" />
+    <text x="800" y="398" class="markerLabel">FINISH</text>
+
+    <!-- Hairpin labels (H1-H6) — visual reference, not connected to simulation zones -->
+    <text x="168" y="260" class="hairpinLabel" aria-hidden="true">H1</text>
+    <text x="118" y="182" class="hairpinLabel" aria-hidden="true">H2</text>
+    <text x="378" y="215" class="hairpinLabel" aria-hidden="true">H3</text>
+    <text x="500" y="92" class="hairpinLabel" aria-hidden="true">H4</text>
+    <text x="830" y="198" class="hairpinLabel" aria-hidden="true">H5</text>
+    <text x="575" y="342" class="hairpinLabel" aria-hidden="true">H6</text>
+
+    <!-- Car 1 sprite — positioned via getCarTransform() which uses translate + rotate -->
+    @if (car1Pos.imageUrl) {
+      <g [attr.transform]="getCarTransform(car1Pos)" class="carIcon car1Icon">
+        <image
+          x="-38"
+          y="-24"
+          width="76"
+          height="48"
+          [attr.href]="car1Pos.imageUrl"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <title>{{ car1Pos.driverName }}</title>
+        </image>
+      </g>
+    }
+
+    <!-- Car 2 sprite -->
+    @if (car2Pos.imageUrl) {
+      <g [attr.transform]="getCarTransform(car2Pos)" class="carIcon car2Icon">
+        <image
+          x="-38"
+          y="-24"
+          width="76"
+          height="48"
+          [attr.href]="car2Pos.imageUrl"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <title>{{ car2Pos.driverName }}</title>
+        </image>
+      </g>
+    }
+  </svg>
+</div>
