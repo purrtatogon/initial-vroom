@@ -2,32 +2,37 @@ import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Subject, Observable } from 'rxjs';
-import { Telemetry } from '../models/telemetry.model';
+import { BattleTelemetry } from '../models/telemetry.model';
 
+// WebSocket endpoint — matches the backend's registerStompEndpoints config
 const WS_URL = '/vroom-ws';
+// STOMP topic the backend publishes to every tick
 const RACE_TOPIC = '/topic/race';
 
 /**
- * WebSocket service for race telemetry. Uses SockJS + STOMP (first time using WebSockets).
- * Connects to the backend, subscribes to /topic/race, and exposes incoming data as an Observable.
+ * Connects to the backend WebSocket and exposes a telemetry$ observable.
+ * Uses SockJS as the transport (falls back to HTTP if WebSocket is blocked).
+ * The dashboard subscribes to telemetry$ and updates the UI every 50ms.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class TelemetryService {
-  // Subject receives WebSocket messages; asObservable() exposes a read-only stream to components
-  private readonly telemetrySubject = new Subject<Telemetry>();
-  readonly telemetry$: Observable<Telemetry> = this.telemetrySubject.asObservable();
+  // Subject acts as both producer and consumer — we push into it, dashboard reads from it
+  private readonly telemetrySubject = new Subject<BattleTelemetry>();
+  readonly telemetry$: Observable<BattleTelemetry> = this.telemetrySubject.asObservable();
 
   private client: Client | null = null;
 
   connect(): void {
     this.client = new Client({
-      webSocketFactory: () => new SockJS(WS_URL),  // SockJS provides fallbacks if WebSocket is blocked
+      // SockJS wraps the WebSocket connection; needed because raw WS can fail through proxies
+      webSocketFactory: () => new SockJS(WS_URL),
       onConnect: () => {
+        // Once connected, subscribe to the race topic and push each message to our Subject
         this.client?.subscribe(RACE_TOPIC, (message) => {
-          const telemetry = JSON.parse(message.body) as Telemetry;
-          this.telemetrySubject.next(telemetry);
+          const battle = JSON.parse(message.body) as BattleTelemetry;
+          this.telemetrySubject.next(battle);
         });
       },
     });

@@ -1,115 +1,248 @@
+/* Dashboard uses flexbox for the overall layout and CSS grid for the battle area */
 .dashboard {
-  padding: 1rem;
+  padding: 1.5rem;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--color-amber);
+  margin: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Disclaimer note styled as a subtle banner between the title and abort button */
+.disclaimer {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  color: var(--color-text-dim);
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0.375rem 1rem;
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-panel);
 }
 
 .controls {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
 }
 
-.start-btn,
-.stop-btn {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+/* Abort button: outlined red, fills red on hover */
+.abortBtn {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  padding: 0.625rem 1.5rem;
+  min-height: 44px;
+  min-width: 44px;
+  border: 1px solid var(--color-red);
+  background: transparent;
+  color: var(--color-red);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.15s, color 0.15s;
 }
 
-.start-btn:disabled,
-.stop-btn:disabled {
+.abortBtn:hover {
+  background: var(--color-red);
+  color: var(--color-bg);
+}
+
+.abortBtn:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-red);
+}
+
+.abortBtn:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
-.stop-btn {
-  background: #c62828;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
+/* Three-column grid: left panel (220px) | track map (flex) | right panel (220px) */
+.battleArea {
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
   gap: 1rem;
-  min-height: 400px;
+  flex: 1;
+  min-height: 450px;
 }
 
-.left-panel {
-  flex: 0 0 30%;
+/* Telemetry panels: vertical stack of driver info, gauges, and gear display */
+.telemetryPanel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+}
+
+.panelLabel {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-panel-border);
+}
+
+.driverName {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.carName {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0.25rem 0 0;
+}
+
+.teamName {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  color: var(--color-amber);
+  margin: 0;
 }
 
 .gauges {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
+  flex: 1;
 }
 
+/* Each gauge box: label, big number, unit — mimics a physical instrument */
 .gauge {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  background: #1a1a1a;
-  border-radius: 8px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
 }
 
-.gauge-label {
-  font-size: 0.75rem;
+.gaugeLabel {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
   text-transform: uppercase;
-  color: #888;
+  color: var(--color-text-dim);
+  letter-spacing: 0.1em;
 }
 
-.gauge-value {
-  font-size: 2rem;
-  font-weight: bold;
-  font-family: 'Courier New', monospace;
-  color: #00ff88;
+.gaugeValue {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  line-height: 1;
+  color: var(--color-green);
 }
 
-.gauge-unit {
-  font-size: 0.75rem;
-  color: #666;
+.gaugeUnit {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  color: var(--color-text-dim);
 }
 
-.driver-info {
-  padding: 1rem;
-  background: #1a1a1a;
-  border-radius: 8px;
+/* Gear display: big amber number in a bordered box */
+.gearDisplay {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--color-amber);
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-amber-dim);
+  border-radius: var(--radius-sm);
 }
 
-.driver-name {
+.gearLabel {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  color: var(--color-text-dim);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Track section fills the center column and clips the SVG */
+.trackSection {
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Status bar: gap and elapsed time displayed in a centered row */
+.statusBar {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-sm);
+}
+
+.statusItem {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.statusLabel {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.statusValue {
+  font-family: var(--font-display);
   font-size: 1.25rem;
-  margin: 0 0 0.5rem 0;
+  color: var(--color-amber);
 }
 
-.car-name {
-  font-size: 0.9rem;
-  color: #aaa;
-  margin: 0;
+.waitingMessage {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-text-dim);
+  text-align: center;
+  padding: 4rem 2rem;
+  letter-spacing: 0.05em;
 }
 
-.track-map {
-  flex: 1 1 70%;
-  min-width: 0;
-}
+/* On narrow screens, stack panels above/below the track instead of side-by-side */
+@media (max-width: 900px) {
+  .battleArea {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 300px auto;
+  }
 
-.map-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
-  background: #2d2d2d;
-  border-radius: 8px;
-}
-
-.car-icon {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  transform: translate(-50%, -50%);
+  /* Put the track map first on mobile */
+  .trackSection {
+    order: -1;
+  }
 }
