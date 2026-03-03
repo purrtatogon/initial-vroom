@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-// loadComponent splits routes into lazy chunks — starting with the picker only.
 export const routes: Routes = [
   { path: '', redirectTo: 'battle', pathMatch: 'full' },
   {
@@ -8,6 +7,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./battle-picker/battle-picker.component').then(
         (m) => m.BattlePickerComponent,
+      ),
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent,
       ),
   },
 ];
