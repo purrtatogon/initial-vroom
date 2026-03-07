@@ -1,0 +1,233 @@
+/* Results screen: centered column, max 800px wide */
+.results {
+  min-height: 100vh;
+  padding: 2.5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-amber);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-align: center;
+}
+
+/* Winner card: green border + subtle glow to celebrate the winner */
+.winnerCard {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--color-panel);
+  border: 2px solid var(--color-green);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 2rem;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+}
+
+.winnerImage {
+  width: 140px;
+  height: 90px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.winnerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.winnerTag {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-green);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.winnerDriver {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.winnerCar {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.winnerTeam {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-amber);
+  margin: 0;
+}
+
+/* Stats comparison grid: three columns (car1 value | stat name | car2 value) */
+.statsGrid {
+  width: 100%;
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.statsHeader {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--color-panel-border);
+}
+
+.statsHeaderCell {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-amber);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.statsHeaderMiddle {
+  color: var(--color-text-dim);
+  min-width: 140px;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  padding: 0.625rem 1.25rem;
+  border-bottom: 1px solid var(--color-panel-border);
+}
+
+.statsRow:last-child {
+  border-bottom: none;
+}
+
+.statsCellValue {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  color: var(--color-green);
+  text-align: center;
+}
+
+.statsCellLabel {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Race time and gap summary row */
+.summary {
+  display: flex;
+  gap: 3rem;
+  padding: 1rem 2rem;
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-border);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  justify-content: center;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.summaryLabel {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.summaryValue {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-amber);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* All action buttons share base styles, then primary/secondary override color */
+.actionBtn {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  padding: 0.75rem 2.5rem;
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: opacity 0.15s;
+}
+
+.actionBtn:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.primaryBtn {
+  background: var(--color-amber);
+  color: var(--color-bg);
+  border: none;
+}
+
+.primaryBtn:hover {
+  opacity: 0.9;
+}
+
+.secondaryBtn {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-panel-border);
+}
+
+.secondaryBtn:hover {
+  border-color: var(--color-text-dim);
+  color: var(--color-text-primary);
+}
+
+/* Stack winner card and buttons vertically on mobile */
+@media (max-width: 600px) {
+  .winnerCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actionBtn {
+    width: 100%;
+  }
+}

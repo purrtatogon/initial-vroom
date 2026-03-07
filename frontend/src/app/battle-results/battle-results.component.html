@@ -1,0 +1,72 @@
+<!-- Results screen — shown after a race finishes (navigated from dashboard after 1.5s delay) -->
+@if (result && winner && loser) {
+  <div class="results">
+    <h1 class="heading">Battle Complete</h1>
+
+    <!-- Winner announcement card with green glow border -->
+    <div class="winnerCard">
+      <img [src]="winner.imageUrl" [alt]="winner.carDisplayName" class="winnerImage" />
+      <div class="winnerInfo">
+        <span class="winnerTag">Winner</span>
+        <h2 class="winnerDriver">{{ winner.driverName }}</h2>
+        <p class="winnerCar">{{ winner.carDisplayName }}</p>
+        <p class="winnerTeam">{{ winner.driverTeam }}</p>
+      </div>
+    </div>
+
+    <!-- Side-by-side stat comparison using role="table" for screen readers -->
+    <div class="statsGrid" role="table" aria-label="Battle statistics comparison">
+      <div class="statsHeader" role="row">
+        <span class="statsHeaderCell" role="columnheader">{{ result.car1.driverName }}</span>
+        <span class="statsHeaderCell statsHeaderMiddle" role="columnheader">Stat</span>
+        <span class="statsHeaderCell" role="columnheader">{{ result.car2.driverName }}</span>
+      </div>
+
+      <div class="statsRow" role="row">
+        <span class="statsCellValue" role="cell">{{ result.car1.currentSpeed | number:'1.0-0' }}</span>
+        <span class="statsCellLabel" role="cell">Final Speed (km/h)</span>
+        <span class="statsCellValue" role="cell">{{ result.car2.currentSpeed | number:'1.0-0' }}</span>
+      </div>
+
+      <div class="statsRow" role="row">
+        <span class="statsCellValue" role="cell">{{ result.car1.currentRpm | number:'1.0-0' }}</span>
+        <span class="statsCellLabel" role="cell">Final RPM</span>
+        <span class="statsCellValue" role="cell">{{ result.car2.currentRpm | number:'1.0-0' }}</span>
+      </div>
+
+      <div class="statsRow" role="row">
+        <span class="statsCellValue" role="cell">{{ result.car1.gear }}</span>
+        <span class="statsCellLabel" role="cell">Final Gear</span>
+        <span class="statsCellValue" role="cell">{{ result.car2.gear }}</span>
+      </div>
+
+      <div class="statsRow" role="row">
+        <span class="statsCellValue" role="cell">{{ result.car1.carDisplayName }}</span>
+        <span class="statsCellLabel" role="cell">Car</span>
+        <span class="statsCellValue" role="cell">{{ result.car2.carDisplayName }}</span>
+      </div>
+    </div>
+
+    <!-- Race time and gap summary -->
+    <div class="summary">
+      <div class="summaryItem">
+        <span class="summaryLabel">Race Time</span>
+        <span class="summaryValue">{{ elapsedFormatted }}</span>
+      </div>
+      <div class="summaryItem">
+        <span class="summaryLabel">Gap</span>
+        <span class="summaryValue">{{ gapFormatted }} m</span>
+      </div>
+    </div>
+
+    <!-- Both buttons clear the stored result and go back to the picker -->
+    <div class="actions">
+      <button class="actionBtn primaryBtn" (click)="rematch()">
+        New Battle
+      </button>
+      <button class="actionBtn secondaryBtn" (click)="backToPicker()">
+        Back to Picker
+      </button>
+    </div>
+  </div>
+}
