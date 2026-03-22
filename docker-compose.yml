@@ -1,20 +1,29 @@
+# Three-service stack: MongoDB → Spring Boot backend → Angular frontend (nginx)
+# Start everything: docker-compose up --build
+# depends_on controls startup order, but doesn't wait for services to be "ready"
+
 services:
+  # MongoDB: stores the car specs collection
   db:
     image: mongo:latest
     container_name: db-mongo-initial
     ports:
       - "27017:27017"
 
+  # Spring Boot: REST API + WebSocket simulation engine
   backend:
     build: ./backend
     container_name: initial-vroom-back
     ports:
       - "8081:8081"
     environment:
+      # Overrides application.properties for container networking
+      # "db" hostname resolves to the Mongo container via Docker's internal DNS
       SPRING_DATA_MONGODB_URI: mongodb://db:27017/vroom
     depends_on:
       - db
 
+  # Angular app served by nginx, which also proxies /api/ and /vroom-ws/ to the backend
   frontend:
     build: ./frontend
     container_name: initial-vroom-front
