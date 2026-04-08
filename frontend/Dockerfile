@@ -9,12 +9,14 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . ./
-RUN npm run build
+# NG_CONFIG selects the Angular build configuration:
+#   "development" in Docker Compose (uses environment.ts → localhost URLs)
+#   "production"  in CI/CD         (uses environment.prod.ts → Azure URLs)
+ARG NG_CONFIG=production
+RUN npx ng build --configuration $NG_CONFIG
 
-# Production stage: nginx serves the static files and proxies API/WebSocket to backend
+# Production stage: nginx serves the static files
 FROM nginx:alpine
-# Replace the default nginx config with ours (handles /api/ and /vroom-ws/ proxying)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-# Copy the compiled Angular output into nginx's serve directory
 COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
 EXPOSE 80

@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Car } from '../models/car.model';
+import { environment } from '../../environments/environment';
 
 /**
  * Fetches car data from the REST API.
- * The base URL '/api/cars' works because nginx proxies it to the backend.
+ * The URL comes from environment.apiUrl — localhost in dev, Azure URL in prod.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class CarService {
-  private readonly baseUrl = '/api/cars';
+  private readonly baseUrl = `${environment.apiUrl}/cars`;
 
   constructor(private http: HttpClient) {}
 

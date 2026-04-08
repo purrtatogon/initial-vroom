@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 /**
  * HTTP calls to start and stop battles.
@@ -10,7 +11,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class BattleService {
-  private readonly baseUrl = '/api/battles';
+  private readonly baseUrl = `${environment.apiUrl}/battles`;
 
   constructor(private http: HttpClient) {}
 

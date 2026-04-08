@@ -3,9 +3,8 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Subject, Observable } from 'rxjs';
 import { BattleTelemetry } from '../models/telemetry.model';
+import { environment } from '../../environments/environment';
 
-// WebSocket endpoint — matches the backend's registerStompEndpoints config
-const WS_URL = '/vroom-ws';
 // STOMP topic the backend publishes to every tick
 const RACE_TOPIC = '/topic/race';
 
@@ -27,7 +26,7 @@ export class TelemetryService {
   connect(): void {
     this.client = new Client({
       // SockJS wraps the WebSocket connection; needed because raw WS can fail through proxies
-      webSocketFactory: () => new SockJS(WS_URL),
+      webSocketFactory: () => new SockJS(environment.wsUrl),
       onConnect: () => {
         // Once connected, subscribe to the race topic and push each message to our Subject
         this.client?.subscribe(RACE_TOPIC, (message) => {
