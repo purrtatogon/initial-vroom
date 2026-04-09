@@ -29,7 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // /vroom-ws is where the frontend connects to open the WebSocket
         registry.addEndpoint("/vroom-ws")
-                .setAllowedOriginPatterns("*")  // wide open for dev; nginx handles this in prod
+                .setAllowedOriginPatterns("*")  // allows cross-origin connections from any frontend URL
                 .withSockJS();  // fallback for browsers/proxies that block raw WebSocket
     }
 }

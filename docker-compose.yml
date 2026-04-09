@@ -1,4 +1,4 @@
-# Three-service stack: MongoDB → Spring Boot backend → Angular frontend (nginx)
+# Three-service stack: MongoDB -> Spring Boot backend -> Angular frontend (nginx)
 # Start everything: docker-compose up --build
 # depends_on controls startup order, but doesn't wait for services to be "ready"
 
@@ -17,17 +17,21 @@ services:
     ports:
       - "8081:8081"
     environment:
-      # Overrides application.properties for container networking
-      # "db" hostname resolves to the Mongo container via Docker's internal DNS
+      # Activates application-docker.properties (same pattern as chaotic-the-harmony)
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATA_MONGODB_URI: mongodb://db:27017/vroom
     depends_on:
       - db
 
-  # Angular app served by nginx, which also proxies /api/ and /vroom-ws/ to the backend
+  # Angular app served by nginx (static files only — browser calls backend directly)
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        # Build with development config so environment.ts (localhost URLs) is used
+        NG_CONFIG: development
     container_name: initial-vroom-front
     ports:
-      - "4200:4200"
+      - "4200:80"
     depends_on:
       - backend
