@@ -13,7 +13,7 @@ This is the Angular 18 frontend for Initial Vroom. It renders the battle picker,
 | RxJS | 7.8 | Observable streams for WebSocket telemetry data |
 | @stomp/stompjs | 7.3 | STOMP client for subscribing to `/topic/race` |
 | sockjs-client | 1.6 | WebSocket transport layer with fallback for blocked environments |
-| nginx | alpine | Production server; serves static files and proxies API/WebSocket to the backend |
+| nginx | alpine | Production server; serves the compiled Angular static files |
 
 ---
 
@@ -81,7 +81,7 @@ The app has three screens connected by Angular's router:
 
 ### REST (HTTP)
 
-The frontend makes standard HTTP calls using Angular's `HttpClient`. In the Dockerized deployment, nginx proxies these to the backend:
+The frontend makes standard HTTP calls using Angular's `HttpClient`. The backend URL comes from Angular environment files (`src/environments/environment.ts` for dev, `environment.prod.ts` for Azure):
 
 | Service | Method | Backend Endpoint | Purpose |
 |:--------|:-------|:-----------------|:--------|
@@ -90,7 +90,7 @@ The frontend makes standard HTTP calls using Angular's `HttpClient`. In the Dock
 | `BattleService` | `POST` | `/api/battles` | Start a race with two car IDs |
 | `BattleService` | `POST` | `/api/battles/stop` | Abort the current race |
 
-The base URL is just `/api/...` (relative). In Docker, nginx rewrites this to `http://backend:8081/api/...`. For local dev, you would use Angular's `proxy.conf.json` to forward to `localhost:8081`.
+The base URL comes from `environment.apiUrl` — `http://localhost:8081/api` in dev, or the Azure Container App URL in prod. Angular's `fileReplacements` in `angular.json` swaps the file at build time.
 
 ### WebSocket (STOMP/SockJS)
 
@@ -102,7 +102,7 @@ The `TelemetryService` uses `@stomp/stompjs` with `sockjs-client` as the transpo
 4. The dashboard component subscribes to `telemetry$` to update all UI bindings.
 5. On navigation away (abort or race finish), `disconnect()` deactivates the client.
 
-nginx proxies `/vroom-ws/` with the `Upgrade` and `Connection` headers required for the WebSocket handshake. Without these, the connection fails with a 403.
+The browser connects to the backend's WebSocket endpoint directly (cross-origin). The backend's `WebSocketConfig` allows all origins via `setAllowedOriginPatterns("*")`.
 
 ### Data Model Alignment
 
@@ -180,7 +180,7 @@ npm install
 npm start
 ```
 
-Runs on `http://localhost:4200`. Requires the backend running on `localhost:8081` (or a `proxy.conf.json` to forward `/api/` requests).
+Runs on `http://localhost:4200`. Requires the backend running on `localhost:8081` (`environment.ts` points API calls there automatically).
 
 ### Production build
 
@@ -196,10 +196,7 @@ The Dockerfile uses a multi-stage build:
 1. **Stage 1** (`node:20-alpine`): installs dependencies with `npm ci` and compiles the Angular app.
 2. **Stage 2** (`nginx:alpine`): copies the compiled static files and the custom `nginx.conf` into the nginx image.
 
-The nginx config handles three responsibilities:
-- Serves the Angular SPA with `try_files` fallback to `index.html` (required for client-side routing).
-- Proxies `/api/` to `http://backend:8081/api/`.
-- Proxies `/vroom-ws/` to `http://backend:8081/vroom-ws/` with WebSocket upgrade headers.
+The nginx config serves the Angular SPA with `try_files` fallback to `index.html` (required for client-side routing). No API proxying — the browser calls the backend directly.
 
 ---
 

@@ -52,10 +52,13 @@ src/main/java/com/initialvroom/
 
 ```
 src/main/resources/
-├── application.properties          # MongoDB database name + server port
+├── application.properties              # Shared defaults (app name, port, database name)
+├── application-local.properties        # Local dev profile (localhost MongoDB)
+├── application-docker.properties       # Docker Compose profile (db:27017)
+├── application-prod.properties         # Azure production profile (Atlas URI from env var)
 └── data/
-    ├── stage1_battle cars.csv      # 7 Stage 1 cars (15 columns each)
-    └── stage2_battle cars.csv      # 7 Stage 2 cars (15 columns each)
+    ├── stage1_battle cars.csv          # 7 Stage 1 cars (15 columns each)
+    └── stage2_battle cars.csv          # 7 Stage 2 cars (15 columns each)
 ```
 
 ---
@@ -175,7 +178,7 @@ When either car's distance reaches 5000m, both are clamped so progress never exc
 
 - **Simple broker** on `/topic` -- an in-memory broker, no external message queue needed.
 - **SockJS endpoint** at `/vroom-ws` -- provides fallback transport for environments where raw WebSocket is blocked (corporate proxies, certain mobile networks).
-- **`setAllowedOriginPatterns("*")`** -- wide open for development. In production, nginx handles the proxying and the browser only talks to the frontend origin.
+- **`setAllowedOriginPatterns("*")`** -- allows cross-origin connections from any frontend URL (localhost in dev, Azure in prod).
 
 The simulation service uses `SimpMessagingTemplate` to publish to `/topic/race`. Any connected STOMP client subscribed to that topic receives the `BattleTelemetryDTO` every 50ms.
 
@@ -187,13 +190,11 @@ The simulation service uses `SimpMessagingTemplate` to publish to `/topic/race`.
 
 The frontend's `CarService` calls `GET /api/cars` to populate the battle picker. The `BattleService` calls `POST /api/battles` with `{ car1Id, car2Id }` to start a race and `POST /api/battles/stop` to abort.
 
-In Docker, nginx on port 4200 proxies `/api/*` requests to `http://backend:8081/api/*`. The frontend never talks to port 8081 directly.
+The backend URL comes from Angular environment files (`environment.ts` for dev, `environment.prod.ts` for Azure). The browser calls the backend directly — no proxy layer.
 
 ### WebSocket (consumed by @stomp/stompjs + sockjs-client)
 
-The frontend's `TelemetryService` connects to `/vroom-ws` using SockJS, subscribes to `/topic/race`, and pushes each incoming JSON message into an RxJS `Subject`. The dashboard component subscribes to this observable and updates the UI on every tick.
-
-nginx proxies `/vroom-ws/*` to `http://backend:8081/vroom-ws/*` with the `Upgrade` and `Connection` headers required for WebSocket. The `proxy_read_timeout 86400s` prevents nginx from killing the long-lived connection during a race.
+The frontend's `TelemetryService` connects to the backend's `/vroom-ws` endpoint directly using SockJS, subscribes to `/topic/race`, and pushes each incoming JSON message into an RxJS `Subject`. The dashboard component subscribes to this observable and updates the UI on every tick. Cross-origin WebSocket is allowed by `setAllowedOriginPatterns("*")` in `WebSocketConfig`.
 
 ### Data Contract
 
@@ -211,16 +212,17 @@ No transformation or adapter layer exists. If a field is added to the Java entit
 
 ## Configuration
 
-### application.properties
+### Spring Profiles
 
-```properties
-spring.data.mongodb.database=vroom    # MongoDB database name
-server.port=8081                       # API port (avoids conflict with common port 8080)
-```
+The backend uses three environment profiles (same pattern as chaotic-the-harmony):
 
-### Docker Environment Override
+| Profile | Activated by | MongoDB connection |
+|---------|-------------|-------------------|
+| **local** | `mvn spring-boot:run -Dspring-boot.run.profiles=local` | `mongodb://localhost:27017/vroom` |
+| **docker** | `SPRING_PROFILES_ACTIVE: docker` in docker-compose.yml | `mongodb://db:27017/vroom` (Docker DNS) |
+| **prod** | `SPRING_PROFILES_ACTIVE=prod` on Azure Container App | `${SPRING_DATA_MONGODB_URI}` (Atlas, from Azure secret) |
 
-In `docker-compose.yml`, the environment variable `SPRING_DATA_MONGODB_URI=mongodb://db:27017/vroom` overrides the default MongoDB connection. The hostname `db` resolves to the MongoDB container via Docker's internal DNS.
+`application.properties` holds shared defaults (app name, port 8081, database name `vroom`).
 
 ---
 

@@ -2,6 +2,8 @@
 
 ### A Full-Stack Race Telemetry Simulator and Visualizer
 
+**[Live Demo](https://frontend.niceriver-1bba6173.spaincentral.azurecontainerapps.io/battle)** — hosted on Azure Container Apps
+
 **Initial Vroom** is a full-stack telemetry platform that simulates head-to-head mountain pass battles and visualizes the results in a real-time dashboard. Inspired by the legendary street races on _Mt. Akina_ from the anime **Initial D** and by the endurance data streams of **Le Mans**, this project demonstrates real-time data streaming, dual-protocol APIs (REST + WebSocket), containerized microservices, document-based data modeling, and a custom-built frontend with WCAG AAA accessibility compliance.
 
 ---
@@ -27,7 +29,7 @@ Two technology choices were deliberate learning goals:
 | **Database** | MongoDB | latest | Document store for car specifications (14 cars, 15 fields each) |
 | **Communication** | REST + STOMP/SockJS | -- | REST for commands (start/stop), STOMP over WebSocket for 20Hz telemetry |
 | **CSV Parsing** | OpenCSV | 5.9 | Seed data loader with annotation-based column mapping |
-| **DevOps** | Docker Compose | -- | Three-service containerization with nginx reverse proxy |
+| **DevOps** | Docker Compose | -- | Three-service containerization (MongoDB, backend, frontend) |
 
 ---
 
@@ -45,7 +47,10 @@ initial-vroom/
 │   │   └── service/                # RaceSimulationService (the simulation engine)
 │   ├── src/main/resources/
 │   │   ├── data/                   # CSV seed files (stage1 + stage2 cars)
-│   │   └── application.properties
+│   │   ├── application.properties            # Shared defaults
+│   │   ├── application-local.properties      # Local dev (localhost MongoDB)
+│   │   ├── application-docker.properties     # Docker Compose profile
+│   │   └── application-prod.properties       # Azure production profile
 │   ├── Dockerfile
 │   └── pom.xml
 ├── frontend/                       # Angular application
@@ -57,7 +62,7 @@ initial-vroom/
 │   │   ├── models/                 # TypeScript interfaces (Car, Telemetry)
 │   │   └── services/               # CarService, BattleService, TelemetryService, BattleResultService
 │   ├── src/styles.css              # Global design tokens ("Midnight Run" palette)
-│   ├── nginx.conf                  # Reverse proxy config for Docker
+│   ├── nginx.conf                  # Static file server config for Docker
 │   ├── Dockerfile
 │   └── package.json
 ├── docker-compose.yml
@@ -75,12 +80,12 @@ The application runs as three containers orchestrated by Docker Compose:
 │                        docker-compose                           │
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────────┐    ┌──────────────┐  │
-│  │   MongoDB     │◄───│  Spring Boot     │◄───│  nginx       │  │
-│  │   :27017      │    │  :8081           │    │  :4200       │  │
+│  │   MongoDB     │◄───│  Spring Boot     │    │  nginx       │  │
+│  │   :27017      │    │  :8081           │    │  :80 → :4200 │  │
 │  │               │    │                  │    │              │  │
 │  │  cars         │    │  REST API        │    │  Angular SPA │  │
-│  │  collection   │    │  WebSocket       │    │  /api/ proxy │  │
-│  │               │    │  Simulation      │    │  /ws proxy   │  │
+│  │  collection   │    │  WebSocket       │    │  static files│  │
+│  │               │    │  Simulation      │    │              │  │
 │  └──────────────┘    └──────────────────┘    └──────────────┘  │
 │   db-mongo-initial    initial-vroom-back      initial-vroom-front│
 └─────────────────────────────────────────────────────────────────┘
@@ -90,9 +95,9 @@ The application runs as three containers orchestrated by Docker Compose:
 |:--------|:----------|:-----|:------------|
 | **Database** | `db-mongo-initial` | 27017 | MongoDB instance, stores the `cars` collection |
 | **Backend** | `initial-vroom-back` | 8081 | Spring Boot: REST API, STOMP WebSocket broker, race simulation engine |
-| **Frontend** | `initial-vroom-front` | 4200 | Angular production build served by nginx; proxies `/api/` and `/vroom-ws/` to the backend |
+| **Frontend** | `initial-vroom-front` | 4200 | Angular production build served by nginx (static files only) |
 
-nginx creates a **single-origin** setup: the browser only talks to `localhost:4200`, and nginx routes API and WebSocket traffic to the backend internally. This eliminates CORS configuration in production.
+The browser calls the backend API directly (same pattern as chaotic-the-harmony). nginx only serves the static Angular files. CORS is configured on the backend to allow cross-origin requests from the frontend.
 
 ---
 
@@ -217,7 +222,7 @@ cd frontend
 npm install
 npm start
 ```
-The Angular dev server starts on `http://localhost:4200`. API calls to `/api/` need to be proxied to `localhost:8081` (add a `proxy.conf.json` or use the Docker setup).
+The Angular dev server starts on `http://localhost:4200`. The `environment.ts` file points API calls to `http://localhost:8081` automatically.
 
 ---
 

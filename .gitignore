@@ -28,7 +28,6 @@ docs/
 **/yarn-error.log*
 **/.angular/
 **/yarn.lock
-**/package-lock.json
 
 # Angular build artifacts
 **/browser/
