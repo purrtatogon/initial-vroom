@@ -16,18 +16,23 @@ Each run is a **head-to-head mountain pass battle**: you pick two cars from the 
 
 **Screenshots** below use a **1280px-wide** viewport. On the **Battle Picker**, **Stage 2** sits below the fold—scroll to browse both stages.
 
+![Full picker view: Stage 1 grid at the top of the page and Stage 2 roster visible after scrolling.](docs/screenshots/initial-vroom_full-picker-page_stage1-and-stage2-car-roster.webp)
+
 1. Open the app on the **Battle Picker** and assign **one car to each lane** (Stage 1 and Stage 2 grids are grouped; scroll if you need both).
 
-INITIAL VROOM battle picker at first load: empty left and right lanes and the start of the Stage 1 car grid; Stage 2 is available below the fold.
+   ![Battle picker at first load: empty left and right lanes and the start of the Stage 1 grid; Stage 2 is below the fold.](docs/screenshots/initial-vroom_battle-picker-screen_no-selection.webp)
 
-1. Press **Start Battle**. That issues a REST start command; live updates arrive over **STOMP/WebSocket** at ~20 Hz.
-2. Watch the **dual dashboard** and map until the simulation ends on its own.
+   ![Battle picker with one car staged in each lane, ready to start.](docs/screenshots/initial-vroom_battle-picker-screen_2-cars-already-picked.webp)
 
-INITIAL VROOM live race dashboard: paired speed and RPM gauges for two drivers, timing and gap readouts, and the SVG mountain pass map with both cars on the course.
+2. Press **Start Battle**. That issues a REST start command; live updates arrive over **STOMP/WebSocket** at ~20 Hz.
 
-1. Land on **Battle Results** for the winner, finishing gap, race time, and a stat compare between the two cars.
+3. Watch the **dual dashboard** and map until the simulation ends on its own.
 
-INITIAL VROOM battle results: winner summary, side-by-side car statistics, race duration, and finishing gap.
+   ![Live race dashboard: paired speed and RPM readouts, timing and gap, and the SVG mountain pass with both cars on course.](docs/screenshots/initial-vroom_battle-telemetry-screen_2-cars-racing.webp)
+
+4. Land on **Battle Results** for the winner, finishing gap, race time, and a stat compare between the two cars.
+
+   ![Battle results: winner summary, side-by-side statistics, race duration, and finishing gap.](docs/screenshots/initial-vroom_battle-results-screen.webp)
 
 **💡 Exploration tip:** The loop injects light speed jitter—**rematch the same pair** and you might get a different photo finish.
 
