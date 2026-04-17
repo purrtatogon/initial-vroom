@@ -1,10 +1,10 @@
-# Initial Vroom
+# INITIAL VROOM
 
 ### A Full-Stack Race Telemetry Simulator and Visualizer
 
 **[Live Demo](https://frontend.niceriver-1bba6173.spaincentral.azurecontainerapps.io/battle)** — hosted on Azure Container Apps
 
-**Initial Vroom** is a full-stack telemetry platform that simulates head-to-head mountain pass battles and visualizes the results in a real-time dashboard. Inspired by the legendary street races on _Mt. Akina_ from the anime **Initial D** and by the endurance data streams of **Le Mans**, this project demonstrates real-time data streaming, dual-protocol APIs (REST + WebSocket), containerized microservices, document-based data modeling, and a custom-built frontend with WCAG AAA accessibility compliance.
+**INITIAL VROOM** is a full-stack telemetry platform that simulates head-to-head mountain pass battles and visualizes the results in a real-time dashboard. Inspired by the legendary street races on _Mt. Akina_ from the anime **Initial D** and by the endurance data streams of **Le Mans**, this project demonstrates real-time data streaming, dual-protocol APIs (REST + WebSocket), containerized microservices, document-based data modeling, and a custom-built frontend with accessibility practices aimed at WCAG AAA (contrast, target sizes, focus-visible states, and reduced motion).
 
 ---
 
@@ -66,6 +66,8 @@ initial-vroom/
 │   ├── Dockerfile
 │   └── package.json
 ├── docker-compose.yml
+├── docs/
+│   └── screenshots/              # README UI assets (WebP)
 └── README.md
 ```
 
@@ -98,6 +100,8 @@ The application runs as three containers orchestrated by Docker Compose:
 | **Frontend** | `initial-vroom-front` | 4200 | Angular production build served by nginx (static files only) |
 
 The browser calls the backend API directly (same pattern as chaotic-the-harmony). nginx only serves the static Angular files. CORS is configured on the backend to allow cross-origin requests from the frontend.
+
+When you build the stack with Compose, the frontend container is built with the Angular **development** configuration (`NG_CONFIG` in [docker-compose.yml](docker-compose.yml)), so the SPA uses **localhost** URLs for the REST API and WebSocket. Your browser then reaches the backend at **localhost:8081** via the published port, not an in-cluster hostname.
 
 ---
 
@@ -156,7 +160,7 @@ The project uses a **"Midnight Run"** theme -- a deliberate homage to early 90s 
 - **VT323 monospaced font**: mimics the pixel-perfect text of old ECU monitors.
 - **Amber and green on pitch black**: the classic color palette of instrument clusters and oscilloscopes.
 - **High-contrast, data-dense layout**: information density over decoration, exactly like a real telemetry readout.
-- **WCAG AAA compliance**: all text meets 7:1 contrast ratio. All interactive targets are 44x44px minimum. Focus-visible states on every control. `prefers-reduced-motion` respected globally.
+- **Accessibility**: design tokens target strong contrast; interactive controls use at least 44x44px targets; focus-visible states on controls; `prefers-reduced-motion` respected globally. Validate contrast in your environment if you need formal WCAG sign-off.
 - **SVG mountain pass**: hand-drawn topographic track with contour lines, 6 labeled hairpin markers (the backend simulates 5 braking zones; the SVG labels are independent visual references), and car sprites positioned via `getPointAtLength()`.
 
 ---
@@ -167,7 +171,25 @@ The project uses a **"Midnight Run"** theme -- a deliberate homage to early 90s 
 - **Live Dual Dashboard** -- Real-time gauges (speed, RPM, gear) for both cars, updated at 20Hz via STOMP/SockJS WebSocket. SVG track map with animated car sprites.
 - **Battle Results** -- Post-race screen showing the winner, a side-by-side stat comparison, race time, and gap distance.
 - **REST + WebSocket API** -- REST for data queries and battle commands; WebSocket for continuous telemetry. Demonstrates both protocols working together.
-- **Containerized Workflow** -- Launch the entire stack (database, API, UI) with a single `docker-compose up --build`.
+- **Containerized Workflow** -- Launch the entire stack (database, API, UI) with a single `docker-compose up --build` (or `docker compose up --build` with Compose V2).
+
+---
+
+## Screenshots
+
+The captures below use a **1280px-wide** viewport. On the battle picker, **Stage 2** cars sit below the fold; scroll the page to browse both stages.
+
+### Battle picker
+
+![INITIAL VROOM battle picker at first load: empty left and right lanes and the start of the Stage 1 car grid; Stage 2 is available below the fold.](docs/screenshots/initial-vroom_battle-picker-screen_no-selection.webp)
+
+### Live dashboard
+
+![INITIAL VROOM live race dashboard: paired speed and RPM gauges for two drivers, timing and gap readouts, and the SVG mountain pass map with both cars on the course.](docs/screenshots/initial-vroom_battle-telemetry-screen_2-cars-racing.webp)
+
+### Battle results
+
+![INITIAL VROOM battle results: winner summary, side-by-side car statistics, race duration, and finishing gap.](docs/screenshots/initial-vroom_battle-results-screen.webp)
 
 ---
 
@@ -193,6 +215,8 @@ cd initial-vroom
 docker-compose up --build
 ```
 
+If you use Docker Compose V2, run `docker compose up --build` instead.
+
 This starts MongoDB, the Spring Boot backend, and the Angular frontend. First build takes a few minutes.
 
 3. **Open the app**
@@ -205,6 +229,8 @@ Navigate to [`http://localhost:4200`](http://localhost:4200) in your browser. Yo
 docker-compose down
 ```
 
+With Compose V2: `docker compose down`.
+
 ### Local Development (without Docker)
 
 To run the backend and frontend separately for development:
@@ -212,9 +238,9 @@ To run the backend and frontend separately for development:
 **Backend** (requires Java 21 and Maven):
 ```bash
 cd backend
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
-The backend starts on `http://localhost:8081`. Requires a local MongoDB instance on `localhost:27017`.
+The backend starts on `http://localhost:8081`. The `local` profile sets `spring.data.mongodb.uri` to `mongodb://localhost:27017/vroom` (see `application-local.properties`). Requires MongoDB listening on `localhost:27017`.
 
 **Frontend** (requires Node.js 20+):
 ```bash
@@ -273,12 +299,20 @@ The Angular dev server starts on `http://localhost:4200`. The `environment.ts` f
 - [x] SVG mountain pass with dynamic car positioning via `getPointAtLength()`
 - [x] "Midnight Run" ECU aesthetic with VT323 font and amber/green-on-black palette
 - [x] Two-car battle mode on a single WebSocket channel
-- [x] WCAG AAA accessibility compliance (7:1 contrast, 44px targets, focus management)
+- [x] WCAG-oriented accessibility (contrast targets, 44px targets, focus management)
 - [x] Car roster grouped by stage for the battle picker
 - [ ] **Race Replay Mode** -- "VCR-style" playback of historical races stored in MongoDB
 - [ ] **Progression System** -- Initial D Points (IDP) and a car unlocking system
 - [ ] **Dedicated Car Sprites** -- Unique 2D cut-outs for all 14 cars (currently using placeholders for most)
 - [ ] **Angular Material Migration Evaluation** -- Assess feasibility for component library adoption
+
+---
+
+## Solo maintainer note
+
+**Branching:** I maintain **INITIAL VROOM** solo as a junior developer, so work stays on **`main`** -- not a multi-branch, team-style workflow.
+
+**Testing:** There is **no backend test suite** in the repo yet, and the frontend has the default **Karma/Jasmine** scaffolding but **no specs** checked in. Real tests (and automated a11y checks) are a likely next step as the project grows.
 
 ---
 
@@ -290,5 +324,5 @@ The Angular dev server starts on `http://localhost:4200`. The `environment.ts` f
 ---
 
 <p align="center">
-<em>Thanks for checking out Initial Vroom!</em>
+<em>Thanks for checking out INITIAL VROOM!</em>
 </p>

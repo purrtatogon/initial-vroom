@@ -8,7 +8,7 @@
 dist/
 tmp/
 out/
-docs/
+other_docs/
 
 # IDEs and Editors
 .vscode/

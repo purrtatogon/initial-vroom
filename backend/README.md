@@ -236,6 +236,8 @@ From the project root:
 docker-compose up --build
 ```
 
+If you use Docker Compose V2, run `docker compose up --build` instead. To stop the stack from the project root, use `docker-compose down` or `docker compose down`.
+
 The backend Dockerfile uses a multi-stage build:
 1. **Build stage** (`maven:3.9-eclipse-temurin-21-alpine`): downloads dependencies, compiles, and packages the JAR.
 2. **Run stage** (`eclipse-temurin:21-jre-alpine`): copies just the JAR and runs it. No Maven, no source code in the final image.
@@ -244,14 +246,14 @@ The dependency download (`mvn dependency:go-offline`) is in a separate layer fro
 
 ### Local Development
 
-Requires Java 21, Maven, and a MongoDB instance on `localhost:27017`:
+Requires Java 21, Maven, and MongoDB listening on `localhost:27017`:
 
 ```bash
 cd backend
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-The backend starts on `http://localhost:8081`. Verify it is working:
+The backend starts on `http://localhost:8081`. The `local` profile sets `spring.data.mongodb.uri` to `mongodb://localhost:27017/vroom` (see `application-local.properties`). Verify it is working:
 
 ```bash
 curl http://localhost:8081/api/cars | jq

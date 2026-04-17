@@ -132,10 +132,10 @@ All visual constants are defined as CSS custom properties in `src/styles.css`:
 | `--color-panel` | `#111111` | Slightly lighter panel surfaces |
 | `--color-amber` | `#ff9100` | Primary accent (headers, active states, amber gauges) |
 | `--color-green` | `#00ff88` | Secondary accent (speed values, car 1 highlights) |
-| `--color-red` | `#ff6b6b` | Error states and abort button (7.1:1 contrast) |
+| `--color-red` | `#ff6b6b` | Error states and abort button (intended contrast target, see stylesheet) |
 | `--color-text-primary` | `#e0e0e0` | Main body text |
-| `--color-text-secondary` | `#b0b0b0` | Labels and secondary info (8.7:1 contrast) |
-| `--color-text-dim` | `#a0a0a0` | Muted labels like gauge units (7.2:1 contrast) |
+| `--color-text-secondary` | `#b0b0b0` | Labels and secondary info (intended contrast target, see stylesheet) |
+| `--color-text-dim` | `#a0a0a0` | Muted labels like gauge units (intended contrast target, see stylesheet) |
 | `--font-display` | `'VT323', monospace` | Retro monospace for headers, data readouts, and labels |
 | `--font-body` | System font stack | Clean sans-serif for body text |
 
@@ -144,18 +144,16 @@ All visual constants are defined as CSS custom properties in `src/styles.css`:
 - **VT323** (Google Fonts) is used for all headers, gauge values, labels, and data readouts. It mimics the pixel-perfect text of old ECU monitors.
 - **System font stack** (`-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, ...`) is used for body text like driver names and car descriptions.
 
-### WCAG AAA Accessibility
+### Accessibility
 
-The project targets **WCAG 2.2 Level AAA** compliance:
+This matches the [root README](../README.md): **design tokens target strong contrast**; **interactive controls use at least 44x44px targets**; **focus-visible** styles on controls; and **`prefers-reduced-motion`** respected globally. **Validate contrast** in your environment if you need formal WCAG sign-off.
 
-- **7:1 contrast ratio** for all normal-sized text against the dark background.
-- **4.5:1 contrast ratio** for large text (18px+ or 14px+ bold).
-- **3:1 contrast ratio** for non-text UI components (borders, dividers).
-- **44x44px minimum** touch/click target size on all interactive elements (buttons, car cards).
-- **Focus-visible states** on every interactive control using a 3px amber box-shadow ring.
-- **`prefers-reduced-motion`** media query kills all animations and transitions globally.
-- **Semantic HTML**: single `<h1>` per page, headings in order, `role` and `aria-label` attributes on interactive and landmark elements.
-- **No reliance on color alone**: error states use an icon + text, not just red color. Selected car slots use border changes visible without color perception.
+- **Contrast**: the token table above records intended ratios for key pairs as a design aid, not a certification. Non-text UI (borders, dividers) also aims for sufficient separation on the dark shell -- verify against WCAG if you require proof.
+- **Targets**: buttons and car cards meet or exceed a 44x44px minimum click/touch area.
+- **Focus**: interactive controls use a visible `:focus-visible` ring (e.g. amber `box-shadow`).
+- **Motion**: a global `prefers-reduced-motion` media query removes animations and transitions when the user requests reduced motion.
+- **Semantics**: a single `<h1>` per route, headings in order, and `role` / `aria-label` on interactive and landmark elements where appropriate.
+- **More than color**: error states pair color with icon and text; selected car slots use border changes that remain visible without relying on color alone.
 
 ### The SVG Track Map
 
