@@ -2,7 +2,7 @@
 
 ### A Full-Stack Race Telemetry Simulator and Visualizer
 
-**[Live Demo](https://frontend.niceriver-1bba6173.spaincentral.azurecontainerapps.io/battle)** — hosted on Azure Container Apps
+**[Live Demo](https://initial-vroom-frontend.onrender.com)** — hosted on Render
 
 **INITIAL VROOM** is a full-stack telemetry platform that simulates head-to-head mountain pass battles and visualizes the results in a real-time dashboard. Inspired by the legendary street races on _Mt. Akina_ from the anime **Initial D** and by the endurance data streams of **Le Mans**, this project demonstrates real-time data streaming, dual-protocol APIs (REST + WebSocket), containerized microservices, document-based data modeling, and a custom-built frontend with accessibility practices aimed at WCAG AAA (contrast, target sizes, focus-visible states, and reduced motion).
 
@@ -49,8 +49,7 @@ initial-vroom/
 │   │   ├── data/                   # CSV seed files (stage1 + stage2 cars)
 │   │   ├── application.properties            # Shared defaults
 │   │   ├── application-local.properties      # Local dev (localhost MongoDB)
-│   │   ├── application-docker.properties     # Docker Compose profile
-│   │   └── application-prod.properties       # Azure production profile
+│   │   └── application-docker.properties     # Docker compose profile
 │   ├── Dockerfile
 │   └── pom.xml
 ├── frontend/                       # Angular application
