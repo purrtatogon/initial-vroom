@@ -55,7 +55,7 @@ src/main/resources/
 ├── application.properties              # Shared defaults (app name, port, database name)
 ├── application-local.properties        # Local dev profile (localhost MongoDB)
 ├── application-docker.properties       # Docker Compose profile (db:27017)
-├── application-prod.properties         # Azure production profile (Atlas URI from env var)
+├── application-prod.properties         # Production profile (MongoDB URI from env var, e.g. Atlas)
 └── data/
     ├── stage1_battle cars.csv          # 7 Stage 1 cars (15 columns each)
     └── stage2_battle cars.csv          # 7 Stage 2 cars (15 columns each)
@@ -178,7 +178,7 @@ When either car's distance reaches 5000m, both are clamped so progress never exc
 
 - **Simple broker** on `/topic` -- an in-memory broker, no external message queue needed.
 - **SockJS endpoint** at `/vroom-ws` -- provides fallback transport for environments where raw WebSocket is blocked (corporate proxies, certain mobile networks).
-- **`setAllowedOriginPatterns("*")`** -- allows cross-origin connections from any frontend URL (localhost in dev, Azure in prod).
+- **`setAllowedOriginPatterns("*")`** -- allows cross-origin connections from any frontend URL (localhost in dev, hosted SPA in prod).
 
 The simulation service uses `SimpMessagingTemplate` to publish to `/topic/race`. Any connected STOMP client subscribed to that topic receives the `BattleTelemetryDTO` every 50ms.
 
@@ -190,7 +190,7 @@ The simulation service uses `SimpMessagingTemplate` to publish to `/topic/race`.
 
 The frontend's `CarService` calls `GET /api/cars` to populate the battle picker. The `BattleService` calls `POST /api/battles` with `{ car1Id, car2Id }` to start a race and `POST /api/battles/stop` to abort.
 
-The backend URL comes from Angular environment files (`environment.ts` for dev, `environment.prod.ts` for Azure). The browser calls the backend directly — no proxy layer.
+The backend URL comes from Angular environment files (`environment.ts` for dev, `environment.prod.ts` for production). The browser calls the backend directly — no proxy layer.
 
 ### WebSocket (consumed by @stomp/stompjs + sockjs-client)
 
@@ -214,13 +214,13 @@ No transformation or adapter layer exists. If a field is added to the Java entit
 
 ### Spring Profiles
 
-The backend uses three environment profiles (same pattern as chaotic-the-harmony):
+The backend uses three environment profiles:
 
 | Profile | Activated by | MongoDB connection |
 |---------|-------------|-------------------|
 | **local** | `mvn spring-boot:run -Dspring-boot.run.profiles=local` | `mongodb://localhost:27017/vroom` |
 | **docker** | `SPRING_PROFILES_ACTIVE: docker` in docker-compose.yml | `mongodb://db:27017/vroom` (Docker DNS) |
-| **prod** | `SPRING_PROFILES_ACTIVE=prod` on Azure Container App | `${SPRING_DATA_MONGODB_URI}` (Atlas, from Azure secret) |
+| **prod** | `SPRING_PROFILES_ACTIVE=prod` on the host (e.g. Render) | `${SPRING_DATA_MONGODB_URI}` (e.g. Atlas from env/secrets) |
 
 `application.properties` holds shared defaults (app name, port 8081, database name `vroom`).
 

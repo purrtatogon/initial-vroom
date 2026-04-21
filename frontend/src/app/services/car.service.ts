@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 
 /**
  * Fetches car data from the REST API.
- * The URL comes from environment.apiUrl — localhost in dev, Azure URL in prod.
+ * The URL comes from environment.apiUrl — localhost in dev, production backend URL in prod.
  */
 @Injectable({
   providedIn: 'root',

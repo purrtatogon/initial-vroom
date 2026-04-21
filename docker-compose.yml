@@ -17,7 +17,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      # Activates application-docker.properties (same pattern as chaotic-the-harmony)
+      # Activates application-docker.properties
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATA_MONGODB_URI: mongodb://db:27017/vroom
     depends_on:

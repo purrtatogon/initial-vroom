@@ -11,7 +11,7 @@ RUN npm ci
 COPY . ./
 # NG_CONFIG selects the Angular build configuration:
 #   "development" in Docker Compose (uses environment.ts → localhost URLs)
-#   "production"  in CI/CD         (uses environment.prod.ts → Azure URLs)
+#   "production"  hosted builds      (uses environment.prod.ts → Render backend URLs)
 ARG NG_CONFIG=production
 RUN npx ng build --configuration $NG_CONFIG
 

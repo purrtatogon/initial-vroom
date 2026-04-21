@@ -2,7 +2,7 @@
 
 ### A Full-Stack Race Telemetry Simulator and Visualizer
 
-**[Live Demo](https://initial-vroom-frontend.onrender.com)** — hosted on Render
+**[Live demo right here!](https://initial-vroom-frontend.onrender.com)** — hosted on Render
 
 **INITIAL VROOM** is a full-stack telemetry platform that simulates head-to-head mountain pass battles and visualizes the results in a real-time dashboard. Inspired by the legendary street races on _Mt. Akina_ from the anime **Initial D** and by the endurance data streams of **Le Mans**, this project demonstrates real-time data streaming, dual-protocol APIs (REST + WebSocket), containerized microservices, document-based data modeling, and a custom-built frontend with accessibility practices aimed at WCAG AAA (contrast, target sizes, focus-visible states, and reduced motion).
 
@@ -98,7 +98,7 @@ The application runs as three containers orchestrated by Docker Compose:
 | **Backend** | `initial-vroom-back` | 8081 | Spring Boot: REST API, STOMP WebSocket broker, race simulation engine |
 | **Frontend** | `initial-vroom-front` | 4200 | Angular production build served by nginx (static files only) |
 
-The browser calls the backend API directly (same pattern as chaotic-the-harmony). nginx only serves the static Angular files. CORS is configured on the backend to allow cross-origin requests from the frontend.
+The browser calls the backend API directly. nginx only serves the static Angular files. CORS is configured on the backend to allow cross-origin requests from the frontend.
 
 When you build the stack with Compose, the frontend container is built with the Angular **development** configuration (`NG_CONFIG` in [docker-compose.yml](docker-compose.yml)), so the SPA uses **localhost** URLs for the REST API and WebSocket. Your browser then reaches the backend at **localhost:8081** via the published port, not an in-cluster hostname.
 

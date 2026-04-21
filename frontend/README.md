@@ -81,7 +81,7 @@ The app has three screens connected by Angular's router:
 
 ### REST (HTTP)
 
-The frontend makes standard HTTP calls using Angular's `HttpClient`. The backend URL comes from Angular environment files (`src/environments/environment.ts` for dev, `environment.prod.ts` for Azure):
+The frontend makes standard HTTP calls using Angular's `HttpClient`. The backend URL comes from Angular environment files (`src/environments/environment.ts` for dev, `environment.prod.ts` for production):
 
 | Service | Method | Backend Endpoint | Purpose |
 |:--------|:-------|:-----------------|:--------|
@@ -90,7 +90,7 @@ The frontend makes standard HTTP calls using Angular's `HttpClient`. The backend
 | `BattleService` | `POST` | `/api/battles` | Start a race with two car IDs |
 | `BattleService` | `POST` | `/api/battles/stop` | Abort the current race |
 
-The base URL comes from `environment.apiUrl` — `http://localhost:8081/api` in dev, or the Azure Container App URL in prod. Angular's `fileReplacements` in `angular.json` swaps the file at build time.
+The base URL comes from `environment.apiUrl` — `http://localhost:8081/api` in dev, or the hosted backend URL in prod (e.g. `https://initial-vroom-backend.onrender.com/api`). Angular's `fileReplacements` in `angular.json` swaps the file at build time.
 
 ### WebSocket (STOMP/SockJS)
 

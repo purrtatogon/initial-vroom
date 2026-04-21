@@ -1,7 +1,7 @@
-// Production — used by the Azure CI/CD build (ng build --configuration production).
-// Points to the backend Container App's public HTTPS URL.
+// Production — ng build --configuration production (e.g. Render or local prod image).
+// Points to the backend service public HTTPS URL.
 export const environment = {
   production: true,
-  apiUrl: 'https://backend.niceriver-1bba6173.spaincentral.azurecontainerapps.io/api',
-  wsUrl: 'https://backend.niceriver-1bba6173.spaincentral.azurecontainerapps.io/vroom-ws',
+  apiUrl: 'https://initial-vroom-backend.onrender.com/api',
+  wsUrl: 'https://initial-vroom-backend.onrender.com/vroom-ws',
 };
